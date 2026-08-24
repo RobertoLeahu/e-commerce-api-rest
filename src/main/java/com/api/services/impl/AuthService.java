@@ -51,7 +51,7 @@ public class AuthService {
                 .telefono(request.telefono())
                 .build();
 
-        usuario.setPerfil(perfil);
+        perfil.setUsuario(usuario);
 
         // 4. Persistir Usuario y por CascadeType.ALL se guarda también Perfil
         usuarioRepository.save(usuario);
