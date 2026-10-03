@@ -6,6 +6,7 @@ import com.api.exceptions.CategoryNotFoundException;
 import com.api.mapper.CategoriaMapper;
 import com.api.repositories.CategoriaRepository;
 import com.api.services.CategoriaService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class CategoriaServiceImpl implements CategoriaService {
         this.categoriaMapper = categoriaMapper;
     }
 
+    @Cacheable(value = "listaCategorias", key = "'todas'")
     @Override
     public List<CategoriaResponseDTO> obtenerCategorias() {
         List<Categoria> categorias = categoriaRepository.findAll();
@@ -30,6 +32,7 @@ public class CategoriaServiceImpl implements CategoriaService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "productos", key = "#id")
     @Override
     public CategoriaResponseDTO obtenerCategoriaPorId(Long id) {
         Categoria categoria = categoriaRepository.findById(id);

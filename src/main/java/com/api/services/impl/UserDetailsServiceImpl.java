@@ -21,6 +21,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return usuarioRepository.findByEmail(email)
                 .map(SecurityUser::new)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no ewncontrado con email: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
     }
 }
