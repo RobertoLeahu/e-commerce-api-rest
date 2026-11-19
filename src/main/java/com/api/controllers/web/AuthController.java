@@ -3,6 +3,7 @@ package com.api.controllers.web;
 import com.api.dto.request.LoginRequestDTO;
 import com.api.dto.request.RegisterRequestDTO;
 import com.api.dto.response.AuthResponseDTO;
+import com.api.dto.response.RegisterResponseDTO;
 import com.api.services.impl.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,14 @@ public class AuthController {
     final private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> resgiter(@Valid @RequestBody RegisterRequestDTO request){
-        String response =  authService.register(request);
+    public ResponseEntity<RegisterResponseDTO> resgister(@Valid @RequestBody RegisterRequestDTO request){
+        RegisterResponseDTO response =  authService.register(request);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/confirm")
-    public ResponseEntity<String> confirmAccount(@RequestParam("token") String token){
-        String response = authService.confirmAccount(token);
+    @GetMapping("/activateAccount")
+    public ResponseEntity<String> activateAccount(@RequestParam("token") String token){
+        String response = authService.activateAccount(token);
         return ResponseEntity.ok(response);
     }
 

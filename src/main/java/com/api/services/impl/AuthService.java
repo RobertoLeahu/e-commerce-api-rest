@@ -6,7 +6,7 @@ import com.api.domain.models.Usuario;
 import com.api.dto.request.LoginRequestDTO;
 import com.api.dto.request.RegisterRequestDTO;
 import com.api.dto.response.AuthResponseDTO;
-import com.api.exceptions.UserNotFoundException;
+import com.api.dto.response.RegisterResponseDTO;
 import com.api.repositories.UsuarioRepository;
 import com.api.security.SecurityUser;
 import com.api.security.service.JwtService;
@@ -30,7 +30,7 @@ public class AuthService {
     final private AuthenticationManager authenticationManager;
 
     @Transactional
-    public String register(RegisterRequestDTO request){
+    public RegisterResponseDTO register(RegisterRequestDTO request){
         // 1. Validar que la request si existe ya en la BDD
         if (usuarioRepository.existsByEmail(request.email())) {
             throw new IllegalArgumentException("El email introducido ya existe");
@@ -60,11 +60,14 @@ public class AuthService {
         String verificationCode = jwtService.generateVerificationToken(usuario.getEmail());
         emailService.sendVerificationEmail(usuario.getEmail(), verificationCode);
 
-        return "Registro exitoso. Revisa tu correo electrónico para activar tu cuenta.";
+        return new RegisterResponseDTO(
+                "Registro exitoso. Revisa tu correo electrónico para activar tu cuenta (Produccion). Copia el activationToken y úsalo en el endpoint de activación. (Pruebas)",
+                verificationCode
+        );
     }
 
     @Transactional
-    public String confirmAccount(String token){
+    public String activateAccount(String token){
 
         // 1. Validar si el token de confirmación es válido
         if (!jwtService.isVerificationTokenValid(token)) {

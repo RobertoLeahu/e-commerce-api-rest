@@ -3,7 +3,7 @@ package com.api.dto.response;
 import com.api.domain.enums.Rol;
 
 public record AuthResponseDTO(
-        String token,
+        String authorizationToken,
         String type,
         String email,
         Rol rol
