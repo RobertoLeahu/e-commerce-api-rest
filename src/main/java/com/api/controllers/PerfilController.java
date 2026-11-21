@@ -36,7 +36,7 @@ public class PerfilController {
     }
 
     @PutMapping("/{idUsuario}")
-    public ResponseEntity<PerfilResponseDTO> actualizarPerfil(@Valid @PathVariable Long idUsuario, @RequestBody PerfilRequestDTO perfilRequestDTO) {
+    public ResponseEntity<PerfilResponseDTO> actualizarPerfil(@PathVariable Long idUsuario, @Valid @RequestBody PerfilRequestDTO perfilRequestDTO) {
         return ResponseEntity.ok(perfilService.actualizarPerfil(idUsuario, perfilRequestDTO));
     }
 }

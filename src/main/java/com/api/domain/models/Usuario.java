@@ -31,8 +31,8 @@ public class Usuario{
     private Rol rol;
 
     @Builder.Default
-    @Column(name = "enable")
-    private boolean isEnable = false;
+    @Column(name = "enable", nullable = false)
+    private Boolean isEnable = false;
 
     // Relación uno a uno bidireccional con Perfil
     @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

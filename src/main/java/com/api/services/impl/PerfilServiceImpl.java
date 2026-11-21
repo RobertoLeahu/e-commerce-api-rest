@@ -5,6 +5,7 @@ import com.api.domain.models.Usuario;
 import com.api.dto.request.PerfilRequestDTO;
 import com.api.dto.response.PerfilResponseDTO;
 import com.api.exceptions.ProfileAlreadyAssignedException;
+import com.api.exceptions.ProfileNotFoundException;
 import com.api.exceptions.UserNotFoundException;
 import com.api.mapper.PerfilMapper;
 import com.api.repositories.PerfilRepository;
@@ -34,7 +35,7 @@ public class PerfilServiceImpl implements PerfilService {
         Usuario usuario = usuarioRepository.findById(perfilRequestDTO.idUsuario())
                 .orElseThrow(() -> new UserNotFoundException(perfilRequestDTO.idUsuario()));
 
-        if (perfilRepository.existsById(usuario.getId())) {
+        if (usuario.getPerfil() != null) {
             throw new ProfileAlreadyAssignedException(usuario.getId());
         }
 
@@ -55,11 +56,14 @@ public class PerfilServiceImpl implements PerfilService {
 
     @Override
     public PerfilResponseDTO obtenerPerfilPorIdDeUsuario(Long idUsuario) {
-
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException(idUsuario));
 
         Perfil perfil = usuario.getPerfil();
+
+        if (perfil == null) {
+            throw new ProfileNotFoundException(idUsuario);
+        }
 
         return perfilMapper.toResponse(perfil);
     }
@@ -67,25 +71,30 @@ public class PerfilServiceImpl implements PerfilService {
     @Override
     public PerfilResponseDTO actualizarPerfil(Long idUsuario, PerfilRequestDTO perfilRequestDTO) {
 
+        if (perfilRequestDTO.idUsuario() != null && !perfilRequestDTO.idUsuario().equals(idUsuario)) {
+            throw new IllegalArgumentException("El idUsuario de la URL (" + idUsuario
+                    + ") no coincide con el idUsuario enviado en el cuerpo (" + perfilRequestDTO.idUsuario() + ")");
+        }
+
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new UserNotFoundException(idUsuario));
 
         Perfil perfilExistente = usuario.getPerfil();
-
-        // Validaciones de campos
-        if (perfilRequestDTO.nombre() != null && !perfilRequestDTO.nombre().equals(perfilExistente.getNombre())) {
-            perfilExistente.setNombre(perfilRequestDTO.nombre());
-        }
-        if (perfilRequestDTO.apellido() != null && !perfilRequestDTO.apellido().equals(perfilExistente.getApellido())) {
-            perfilExistente.setApellido(perfilRequestDTO.apellido());
-        }
-        if (perfilRequestDTO.telefono() != null && !perfilRequestDTO.telefono().equals(perfilExistente.getTelefono())) {
-            perfilExistente.setTelefono(perfilRequestDTO.telefono());
+        if (perfilExistente == null) {
+            throw new ProfileNotFoundException(idUsuario);
         }
 
-        // Persistir
+        if (perfilRequestDTO.nombre() != null && !perfilRequestDTO.nombre().isBlank()) {
+            perfilExistente.setNombre(perfilRequestDTO.nombre().trim());
+        }
+        if (perfilRequestDTO.apellido() != null && !perfilRequestDTO.apellido().isBlank()) {
+            perfilExistente.setApellido(perfilRequestDTO.apellido().trim());
+        }
+        if (perfilRequestDTO.telefono() != null && !perfilRequestDTO.telefono().isBlank()) {
+            perfilExistente.setTelefono(perfilRequestDTO.telefono().trim());
+        }
+
         Perfil perfilActualizado = perfilRepository.save(perfilExistente);
-
         return perfilMapper.toResponse(perfilActualizado);
     }
 }

@@ -32,7 +32,7 @@ public class CategoriaServiceImpl implements CategoriaService {
                 .collect(Collectors.toList());
     }
 
-    @Cacheable(value = "productos", key = "#id")
+    @Cacheable(value = "categorias", key = "#id")
     @Override
     public CategoriaResponseDTO obtenerCategoriaPorId(Long id) {
         Categoria categoria = categoriaRepository.findById(id);

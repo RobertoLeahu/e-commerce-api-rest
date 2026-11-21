@@ -44,14 +44,15 @@ public class AuthService {
                 .isEnable(false)
                 .build();
 
-        // 3. Relacionar la instancia de Usuario a un Perfil
+        // 3. Relacionar la instancia de Usuario a un Perfil (en ambos sentidos)
         Perfil perfil = Perfil.builder()
                 .nombre(request.nombre())
                 .apellido(request.apellido())
                 .telefono(request.telefono())
+                .usuario(usuario)
                 .build();
 
-        perfil.setUsuario(usuario);
+        usuario.setPerfil(perfil);
 
         // 4. Persistir Usuario y por CascadeType.ALL se guarda también Perfil
         usuarioRepository.save(usuario);
@@ -81,12 +82,12 @@ public class AuthService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado."));
 
         // 3. Validar si isEnable esta activado o no
-        if (usuario.isEnable()) {
+        if (Boolean.TRUE.equals(usuario.getIsEnable())){
             return "La cuenta ya se encuentra activada previamente.";
         }
 
         // 4. Activar enable y persistir en la BDD
-        usuario.setEnable(true);
+        usuario.setIsEnable(true);
         usuarioRepository.save(usuario);
 
         return "¡Cuenta activada con éxito! Ya puedes iniciar sesión.";

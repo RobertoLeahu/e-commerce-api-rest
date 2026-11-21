@@ -55,8 +55,6 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public ProductoResponseDTO obtenerProductoPorId(Long id) {
 
-        delay(500);
-
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
@@ -66,8 +64,6 @@ public class ProductoServiceImpl implements ProductoService {
     @Cacheable(value = "listaProductos", key = "'todos'")
     @Override
     public List<ProductoResponseDTO> obtenerProductos() {
-
-        delay(500);
 
         List<Producto> productos = productoRepository.findAll();
         return productos.stream()
@@ -87,15 +83,5 @@ public class ProductoServiceImpl implements ProductoService {
 
         productoRepository.deleteById(id);
         return "Producto con id " + id + " borrado correctamente";
-    }
-
-    // Metodo auxiliar para añadir delay a las funciones
-    private void delay(int milisegundos) {
-        try {
-            Thread.sleep(milisegundos);
-        } catch (InterruptedException e) {
-            // Restaura el estado de interrupción por buena práctica en hilos
-            Thread.currentThread().interrupt();
-        }
     }
 }

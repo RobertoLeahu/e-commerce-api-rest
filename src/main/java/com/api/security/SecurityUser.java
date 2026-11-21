@@ -48,6 +48,6 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return usuario.isEnable(); // Mapea el estado de activación real de la cuenta
+        return Boolean.TRUE.equals(usuario.getIsEnable());
     }
 }
